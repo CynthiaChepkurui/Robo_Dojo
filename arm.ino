@@ -14,9 +14,13 @@ long duration;
 float distance;
 int servo1E ;
 int servo2E ;
-int var = 0;
+int var1 ;
+int var2;
+int var3;
+int var4;
 
-int i = 0;
+
+int var ;
 
 void setup() {
   // Attach the Servo variable to a pin:
@@ -32,10 +36,10 @@ void setup() {
 }
 
 void loop() {
-  servo1E=servo1.read();
-  servo2E=servo2.read();
+ // servo1E=servo1.read();
+  //servo2E=servo2.read();
 
-
+Sleep();
 
   // Print the distance to the serial monitor
 while (var < 10){
@@ -56,10 +60,10 @@ while (var < 10){
   Serial.println(distance);
  
   Take();
-  delay(3000);
+  delay(300);
   Place(); 
   
-  delay(3000);
+  delay(300);
   }
 
   else if (distance > 16 )
@@ -70,7 +74,7 @@ while (var < 10){
 
     Sleep();
     
-    delay(3000);
+    delay(300);
   }
  
  
@@ -78,7 +82,7 @@ while (var < 10){
   else {
     Sleep();
     
-    delay(3000);
+    delay(300);
   } 
 
 
@@ -95,74 +99,46 @@ while (var < 10){
 
   
   void Take(){
-        delay(300);
     servo1.write(180);
-    servo2.write(35);
     
-    //delay(300); 
-    servo1.write(175);
-    servo2.write(40);
-      //delay(300); 
-    servo1.write(165);
-    servo2.write(45);
-   //   delay(300); 
-    servo1.write(160);
-    servo2.write(55);
-    //  delay(300); 
-    servo1.write(155);
-    servo2.write(75);
     
-    //delay(200);       
+    for((var1 = 0);(var1 < 144); var1++ )
+    {
+      servo2.write(var1);
+      delay(40);
+    }
 
-    servo1.write(150);
-    servo2.write(90); 
+    for ((var2 = 180);(var2 > 90); var2--)
+    {
+      servo1.write(var2);
+      delay(40);
+    }
 
-    delay(200);
-    servo1.write(160);
-   
-    servo2.write(100);
-    servo1.write(140);
-    delay(200);
-    servo1.write(160);
- 
-    servo2.write(120);
-    servo1.write(130);
-    delay(200);
 
 
 
   }
   void Place(){
     delay(100);
-    servo1.write(135);
-    servo2.write(65);
  
-    delay(200); 
-    servo1.write(145);
-    servo2.write(55);
+
+    for((var4=90);(var4<180);var4++){
+      servo1.write(var4);
+      delay(40);
+    } 
+
+
+    for ((var3=144); (var3>0);var3-- )
+    {
+      servo2.write(var3);
+      delay(40);
+    }
+
+ 
     
-    delay(200);       
-
-    servo1.write(155);
-    servo2.write(45); 
- 
-    delay(200);
-    servo1.write(165);
- 
-    servo2.write(40);
-    servo1.write(175);
-    delay(200);
-    servo1.write(180);
-    
-    servo2.write(35);
-    servo1.write(180);
-    delay(200);
-
-
-
   }
   void Sleep() {
-    servo2.write(35);
+    servo2.write(0);
     servo1.write(180);
 
   }
