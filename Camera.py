@@ -6,14 +6,14 @@ import time
 
 
 vid = cv2.VideoCapture(0)
-vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
+vid.set(cv2.CAP_PROP_FRAME_WIDTH, 500)
+vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 500)
 time.sleep(2)
 vid.set(cv2.CAP_PROP_EXPOSURE, -8.0)
 
 
 #functions needed
-#fumction to bound boxes
+#function to bound boxes
 def image_inference(frame):
 
     #load YOLO
@@ -28,28 +28,38 @@ def image_inference(frame):
 
     result = results[0]
     box = results.boxes[0]
+    # Initialize a list to keep track of labels to ignore
+    labels_to_ignore = []
 
-    #initialize box properties
-    for box in results.boxes:
-        coordinates= box.xyxy[0].tolist()
-        coordinates = [round(x) for x in cords]
-        label = result.names[box.cls[0].item()]
-        confidence = round(box.conf[0].item(), 2)
+# Initialize box properties
+for box in results.boxes:
+    #initialize variables to readable format from pytorch
+    coordinates = box.xyxy[0].tolist()
+    coordinates = [round(x) for x in coordinates]
+    label = result.names[box.cls[0].item()]
+    confidence = round(box.conf[0].item(), 2)
 
-    #arm control acccording to OD
-    for box in results:
-        if label == 'redwheel' and confidence >= 0.7:
-            #arm control
-        elif label == 'bluewheel' and confidence >= 0.7:
-            #arm control
-        elif label == 'whitewheel' and confidence >= 0.7:
-            #arm control  
-        elif label == 'trailer' and confidence >= 0.7:
-            #arm control
-        elif label == 'cabin' and confidence >= 0.7:
-            #arm control  
-        elif label == 'engine' and confidence >= 0.7:
-            #arm control
+    # Arm control according to OD
+    if label == 'redwheel' and confidence >= 0.7:
+        print('Performing arm control for redwheel')
+        # Arm control code for redwheel
+        labels_to_ignore.append('redwheel')
+    elif label == 'bluewheel' and confidence >= 0.7:
+        print('Performing arm control for bluewheel')
+        # Arm control code for bluewheel
+    elif label == 'whitewheel' and confidence >= 0.7:
+        print('Performing arm control for whitewheel')
+        # Arm control code for whitewheel
+    elif label == 'trailer' and confidence >= 0.7:
+        print('Performing arm control for trailer')
+        # Arm control code for trailer
+    elif label == 'cabin' and confidence >= 0.7:
+        print('Performing arm control for cabin')
+        # Arm control code for cabin
+    elif label == 'engine' and confidence >= 0.7:
+        print('Performing arm control for engine')
+        # Arm control code for engine
+
 
 #https://inside-machinelearning.com/en/yolov8-how-to-use/
 #flexibility in adjusting the appearance of bounding boxes and labels
