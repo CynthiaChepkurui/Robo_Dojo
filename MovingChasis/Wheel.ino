@@ -1,6 +1,8 @@
 #include <Encoder.h>
 
+
 // Define the pins connected to the L298N two motor driver 
+
 int enaPin1 = 2;  // Enable pin for Motor 1
 int in1Pin1 = 3;  // IN1 pin for Motor 1
 int in2Pin1 = 4;  // IN2 pin for Motor 1
