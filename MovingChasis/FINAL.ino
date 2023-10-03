@@ -29,13 +29,18 @@ const int Ytrack = 60;
 
 //IR Sensor
 // Define the digital input pins connected to the sensor outputs
-const int sensorPins[] = {30, 31, 32, 33, 34};
+const int sensorPins[] = {30, 31, 33, 32, 34};
 
 //Ultra sonic
-const int trigPin = 26;
-const int echoPin = 25;
-long duration;
-float distance;
+const int trigPin1 = 26;
+const int echoPin1 = 25;
+const int trigPin2 =36;
+const int echoPin2 = 38;
+
+long duration1;
+float distance1;
+long duration2;
+float distance2;
 int var;
 // Motor right connections
 int enA = 6;
@@ -90,8 +95,10 @@ void setup() {
   // Open the serial port at 9600 bps
   Serial.begin(9600);
    //ultrasonic setup
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(trigPin1, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin1, INPUT); // Sets the echoPin as an Input
+  pinMode(trigPin2, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin2, INPUT); // Sets the echoPin as an Input
    //IR sensor setup
   pinMode(sensorPins[0], INPUT);
   pinMode(sensorPins[1], INPUT);
@@ -135,12 +142,19 @@ void loop() {
     currentMillis = millis();
     while (var < 4){
   
-  digitalWrite(trigPin, LOW);
+  digitalWrite(trigPin1, LOW);
   delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
+  digitalWrite(trigPin1, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);
+  digitalWrite(trigPin1, LOW);
+  duration1 = pulseIn(echoPin1, HIGH);
+   digitalWrite(trigPin2, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin2, LOW);
+  duration2 = pulseIn(echoPin2, HIGH);
+  
   // Read the state of each sensor and print the results
   int sensorValue0 = digitalRead(sensorPins[0]);
   int sensorValue1 = digitalRead(sensorPins[1]);
@@ -168,11 +182,18 @@ void loop() {
       left_wheel_pulse_count = 0;
     }
   // duration = pulseIn(echoPin, HIGH);
-  distance = duration * 0.034 / 2;
+  distance1 = duration1 * 0.034 / 2;
   Serial.print("Distance: ");
-  Serial.println(distance);
-  delay(20);
-     if (distance = 0 or distance <33)
+  Serial.println(distance1);
+  distance2 = duration2 * 0.034 / 2;
+  Serial.print("  ");
+  Serial.print(distance2);
+  //delay(20);
+/*  if ((distance2 =0 ) or (distance < 180)){
+
+  }
+  else if (()or())*/
+     if (distance1 = 0 or distance1 <10)
   {
     Serial.print(" Pulses: ");
       Serial.println(right_wheel_pulse_count);
@@ -204,13 +225,15 @@ void loop() {
       Serial.println();
       Serial.println();
 
-  Serial.print("Distance: ");
-  Serial.println(distance);
+  Serial.print("Distance Ultra one: ");
+  Serial.println(distance1);
+  Serial.print("   Two ");
+  Serial.print(distance2);
 
   Serial.print("Sensor Values : ");
   Serial.print(sensorValue0);
-  Serial.print(" : ");
-  Serial.print(sensorValue1);
+ // Serial.print(" : ");
+  //Serial.print(sensorValue1);
   Serial.print(" : ");
   Serial.print(sensorValue2);
   Serial.print(" : ");
@@ -221,50 +244,55 @@ void loop() {
   Serial.println();
 
   StopMotors();
-  delay(500);
+  //delay(500);
+
   ReverseDirectionControl();
-  delay(700);
-  TurnLeftControl();
-  TurnLeftControl();
-  delay(700);
+  delay(300);
+
+  R360T();
+    //delay(600);
   
 
 
   } else {
   
-    if ((sensorValue1 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) && (sensorValue4  == 0)) {
+    if ((sensorValue0 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) ) {
     // Serial.print("Drive straight.");
     ForwardDirectionControl();
+    if ((currentMillis - 250) ==0){
+      TurnRightControl();
+    }
   }
-    else if (((sensorValue0 == 1) && (sensorValue4 == 1)) or ((sensorValue0==1) && (sensorValue1==1) && (sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1))) {
-    // Serial.print("Drive straight.");
-    ForwardDirectionControl();
-      }
-    else if ((sensorValue0==0)&&(sensorValue1==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
+  else if ((sensorValue0==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
     TurnRightControl();
 
   }
-   else if (((sensorValue0==0 && (sensorValue1==0) && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 && (sensorValue1==0) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
+   else if (((sensorValue0==0  && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 &&sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
     MidRightTurn();
 
   }
-  else if ((sensorValue0==0 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
+  else if ((sensorValue0==0  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
     // Serial.print("Turn Right.");
     SmallRightTurn();
   }
-      else if ((sensorValue0==1) && (sensorValue1==0) && (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
+      else if ((sensorValue0==1) &&  (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
     TurnLeftControl();
 
   }
-    else if (((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
+    else if (((sensorValue0==1 && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
     MidLeftTurn();
 
   }
  
-    else if  ((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
+    else if  ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
     // Serial.print("Turn Left.");
     SmallLeftTurn();
   } 
+    else if (((sensorValue0 == 0) && (sensorValue4 == 0)) or ((sensorValue0==0)  && (sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 0))) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+      }
+    
 
   }
     }
@@ -276,14 +304,14 @@ void loop() {
 
 
 void StartForwardDirection(){
-    analogWrite(enB, 100);
-    analogWrite(enA, 79);
+    analogWrite(enB, 80);
+    analogWrite(enA, 59);
 
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
-    delay(50);
+    //delay(50);
 }
 void SmallLeftTurn(){
   analogWrite(enB, 0);
@@ -293,7 +321,7 @@ void SmallLeftTurn(){
   digitalWrite(in2, HIGH );
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(40);
+  //delay(40);
 }
 void MidLeftTurn(){
   analogWrite(enB, 0);
@@ -303,7 +331,7 @@ void MidLeftTurn(){
   digitalWrite(in2, HIGH );
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(50);
+  //delay(50);
 }
 
 void TurnLeftControl()
@@ -315,7 +343,7 @@ void TurnLeftControl()
   digitalWrite(in2, HIGH );
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(100);
+ // delay(100);
 
 }
 void MainFuction(){}//moving to objects
@@ -328,7 +356,7 @@ void SmallRightTurn(){
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(100);
+ // delay(100);
 }
 void MidRightTurn(){
   analogWrite(enB, 80);
@@ -338,20 +366,20 @@ void MidRightTurn(){
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(100);
+  //delay(100);
 }
 // This function lets you control spinning direction of motors
 void ForwardDirectionControl() {
   // Set motors to maximum speed
   // For PWM maximum possible values are 0 to 255
-    analogWrite(enB, 100);
-    analogWrite(enA, 79);
+    analogWrite(enB, 85);
+    analogWrite(enA, 69);
 
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
-    delay(500);
+    //delay(500);
 
 }
 
@@ -396,7 +424,17 @@ void left_wheel_pulse() {
     left_wheel_pulse_count--;
   }
 }
+void R360T(){
+  analogWrite(enB, 250);
+  analogWrite(enA, 0);
 
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  delay(400);
+
+}
 void ReverseDirectionControl()
 {
   analogWrite(enB, 100);
@@ -406,7 +444,7 @@ void ReverseDirectionControl()
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(100);
+  //delay(100);
 }
 void TurnRightControl()
 {
@@ -417,7 +455,7 @@ void TurnRightControl()
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(100);
+  //Delay(100);
 
 }
 
