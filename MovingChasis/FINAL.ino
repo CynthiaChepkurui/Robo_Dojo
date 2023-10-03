@@ -21,12 +21,15 @@ motor
 #define ENC_IN_LEFT_B 4
 //Trackmapping
  int Track;
+ int INXTrack;
+ int INYTrack;
+
 const int Xtrack = 60;
 const int Ytrack = 60;
 
 //IR Sensor
 // Define the digital input pins connected to the sensor outputs
-const int sensorPins[] = {2, 3, 4, 5, 6};
+const int sensorPins[] = {30, 31, 32, 33, 34};
 
 //Ultra sonic
 const int trigPin = 26;
@@ -222,21 +225,56 @@ void loop() {
   ReverseDirectionControl();
   delay(700);
   TurnLeftControl();
+  TurnLeftControl();
   delay(700);
-  ForwardDirectionControl();
+  
 
 
-  }
-  else{
+  } else {
+  
+    if ((sensorValue1 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) && (sensorValue4  == 0)) {
+    // Serial.print("Drive straight.");
     ForwardDirectionControl();
   }
+    else if (((sensorValue0 == 1) && (sensorValue4 == 1)) or ((sensorValue0==1) && (sensorValue1==1) && (sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1))) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+      }
+    else if ((sensorValue0==0)&&(sensorValue1==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
+    TurnRightControl();
+
+  }
+   else if (((sensorValue0==0 && (sensorValue1==0) && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 && (sensorValue1==0) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
+    MidRightTurn();
+
+  }
+  else if ((sensorValue0==0 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
+    // Serial.print("Turn Right.");
+    SmallRightTurn();
+  }
+      else if ((sensorValue0==1) && (sensorValue1==0) && (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
+    TurnLeftControl();
+
+  }
+    else if (((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
+    MidLeftTurn();
+
+  }
+ 
+    else if  ((sensorValue0==1 && (sensorValue1==1) && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
+    // Serial.print("Turn Left.");
+    SmallLeftTurn();
+  } 
+
+  }
+    }
 
     // If one second has passed, print the number of pulses
 
 
     }
 
-}
+
 void StartForwardDirection(){
     analogWrite(enB, 100);
     analogWrite(enA, 79);
@@ -282,8 +320,26 @@ void TurnLeftControl()
 }
 void MainFuction(){}//moving to objects
 void StartReturnDirection(){}
-void SmallRightTurn(){}
-void MidRightTurn(){}
+void SmallRightTurn(){
+  analogWrite(enB, 60);
+  analogWrite(enA, 0);
+
+  digitalWrite(in1, HIGH );
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  delay(100);
+}
+void MidRightTurn(){
+  analogWrite(enB, 80);
+  analogWrite(enA, 0);
+
+  digitalWrite(in1, HIGH );
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  delay(100);
+}
 // This function lets you control spinning direction of motors
 void ForwardDirectionControl() {
   // Set motors to maximum speed
@@ -354,7 +410,7 @@ void ReverseDirectionControl()
 }
 void TurnRightControl()
 {
-  analogWrite(enB, 50);
+  analogWrite(enB, 100);
   analogWrite(enA, 0);
 
   digitalWrite(in1, HIGH );
