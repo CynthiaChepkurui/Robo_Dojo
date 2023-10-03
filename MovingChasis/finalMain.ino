@@ -37,6 +37,7 @@ const int echoPin1 = 25;
 const int trigPin2 =36;
 const int echoPin2 = 38;
 
+int Stage;
 long duration1;
 float distance1;
 long duration2;
@@ -155,12 +156,7 @@ void loop() {
   digitalWrite(trigPin2, LOW);
   duration2 = pulseIn(echoPin2, HIGH);
   
-  // Read the state of each sensor and print the results
-  int sensorValue0 = digitalRead(sensorPins[0]);
-  int sensorValue1 = digitalRead(sensorPins[1]);
-  int sensorValue2 = digitalRead(sensorPins[2]);
-  int sensorValue3 = digitalRead(sensorPins[3]);
-  int sensorValue4 = digitalRead(sensorPins[4]);
+
 
   
       if (currentMillis - previousMillis > interval) {
@@ -189,10 +185,8 @@ void loop() {
   Serial.print("  ");
   Serial.print(distance2);
   //delay(20);
-/*  if ((distance2 =0 ) or (distance < 180)){
-
-  }
-  else if (()or())*/
+ 
+ // else if (()or())
      if (distance1 = 0 or distance1 <10)
   {
     Serial.print(" Pulses: ");
@@ -230,18 +224,6 @@ void loop() {
   Serial.print("   Two ");
   Serial.print(distance2);
 
-  Serial.print("Sensor Values : ");
-  Serial.print(sensorValue0);
- // Serial.print(" : ");
-  //Serial.print(sensorValue1);
-  Serial.print(" : ");
-  Serial.print(sensorValue2);
-  Serial.print(" : ");
-  Serial.print(sensorValue3);
-  Serial.print(" : ");
-  Serial.print(sensorValue4);
-  //Serial.print(); // Separate each reading with a line break
-  Serial.println();
 
   StopMotors();
   //delay(500);
@@ -256,51 +238,16 @@ void loop() {
 
   } else {
   
-    if ((sensorValue0 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) ) {
-    // Serial.print("Drive straight.");
-    ForwardDirectionControl();
-    if ((currentMillis - 250) ==0){
-      TurnRightControl();
-    }
-  }
-  else if ((sensorValue0==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
-    TurnRightControl();
-
-  }
-   else if (((sensorValue0==0  && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 &&sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
-    MidRightTurn();
-
-  }
-  else if ((sensorValue0==0  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
-    // Serial.print("Turn Right.");
-    SmallRightTurn();
-  }
-      else if ((sensorValue0==1) &&  (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
-    TurnLeftControl();
-
-  }
-    else if (((sensorValue0==1 && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
-    MidLeftTurn();
-
-  }
- 
-    else if  ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
-    // Serial.print("Turn Left.");
-    SmallLeftTurn();
-  } 
-    else if (((sensorValue0 == 0) && (sensorValue4 == 0)) or ((sensorValue0==0)  && (sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 0))) {
-    // Serial.print("Drive straight.");
-    ForwardDirectionControl();
-      }
     
 
   }
-    }
+    
 
     // If one second has passed, print the number of pulses
 
 
     }
+}
 
 
 void StartForwardDirection(){
@@ -466,5 +413,106 @@ void StopMotors()
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 }
+
+void StageOne(){
+   if (distance2 > 100 ) {
+    Stage+=1;
+    linefollowing();}    
+  else{
+    TurnRightControl();
+  }}
+void StageTwo(){
+  Stage+=1;
+  if (distance2 >320){
+     linefollowing();}    
+  else{
+    TurnLeftControl(); }    
+ }
+void StageThree(){
+   if (distance2 > 100 ) {
+    Stage+=1;
+    linefollowing();}    
+  else{
+    TurnRightControl();
+  }}
+   void StageFour(){
+   if (distance2 > 90 ) {
+    Stage+=1;
+     linefollowing(); }   
+  else{
+    TurnRightControl(); }}
+void StageFive(){
+  if (distance2 > 90 ) {
+    Stage+=1;
+     linefollowing(); }   
+  else{
+    TurnLeftControl(); }}
+void StageSix(){
+  if (distance2 > 30 ) {
+    Stage+=1;
+     linefollowing();}    
+  else{
+    R360T(); }}
+
+
+void linefollowing(){
+    // Read the state of each sensor and print the results
+  int sensorValue0 = digitalRead(sensorPins[0]);
+  int sensorValue1 = digitalRead(sensorPins[1]);
+  int sensorValue2 = digitalRead(sensorPins[2]);
+  int sensorValue3 = digitalRead(sensorPins[3]);
+  int sensorValue4 = digitalRead(sensorPins[4]);
+  Serial.print("Sensor Values : ");
+  Serial.print(sensorValue0);
+ // Serial.print(" : ");
+  //Serial.print(sensorValue1);
+  Serial.print(" : ");
+  Serial.print(sensorValue2);
+  Serial.print(" : ");
+  Serial.print(sensorValue3);
+  Serial.print(" : ");
+  Serial.print(sensorValue4);
+  //Serial.print(); // Separate each reading with a line break
+  Serial.println();
+
+  if ((sensorValue0 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) ) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+    if ((currentMillis - 250) ==0){
+      TurnRightControl();
+    }
+  }
+  else if ((sensorValue0==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
+    TurnRightControl();
+
+  }
+   else if (((sensorValue0==0  && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 &&sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
+    MidRightTurn();
+
+  }
+  else if ((sensorValue0==0  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
+    // Serial.print("Turn Right.");
+    SmallRightTurn();
+  }
+      else if ((sensorValue0==1) &&  (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
+    TurnLeftControl();
+
+  }
+    else if (((sensorValue0==1 && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
+    MidLeftTurn();
+
+  }
+ 
+    else if  ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
+    // Serial.print("Turn Left.");
+    SmallLeftTurn();
+  } 
+    else if (((sensorValue0 == 0) && (sensorValue4 == 0)) or ((sensorValue0==0)  && (sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 0))) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+      }
+    
+}
+
 
 
