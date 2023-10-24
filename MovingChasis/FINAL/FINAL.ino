@@ -37,11 +37,12 @@ const int echoPin1 = 25;
 const int trigPin2 =36;
 const int echoPin2 = 38;
 
-int Stage;
 long duration1;
 float distance1;
 long duration2;
 float distance2;
+//enable for arm
+int Earm =13;
 int var;
 // Motor right connections
 int enA = 6;
@@ -107,6 +108,7 @@ void setup() {
   pinMode(sensorPins[3], INPUT);
   pinMode(sensorPins[4], INPUT);
 
+    pinMode(Earm, OUTPUT);
     //motorsetup
     pinMode(enA, OUTPUT);
     pinMode(in1, OUTPUT);
@@ -141,7 +143,9 @@ void loop() {
 
     // Record the time
     currentMillis = millis();
+    digitalWrite(Earm, LOW);  
     while (var < 4){
+    
   
   digitalWrite(trigPin1, LOW);
   delayMicroseconds(2);
@@ -156,7 +160,12 @@ void loop() {
   digitalWrite(trigPin2, LOW);
   duration2 = pulseIn(echoPin2, HIGH);
   
-
+  // Read the state of each sensor and print the results
+  int sensorValue0 = digitalRead(sensorPins[0]);
+  int sensorValue1 = digitalRead(sensorPins[1]);
+  int sensorValue2 = digitalRead(sensorPins[2]);
+  int sensorValue3 = digitalRead(sensorPins[3]);
+  int sensorValue4 = digitalRead(sensorPins[4]);
 
   
       if (currentMillis - previousMillis > interval) {
@@ -185,9 +194,11 @@ void loop() {
   Serial.print("  ");
   Serial.print(distance2);
   //delay(20);
- 
- // else if (()or())
-     if (distance1 = 0 or distance1 <10)
+/*  if ((distance2 =0 ) or (distance < 180)){
+
+  }
+  else if (()or())*/
+     if (distance1 = 0 or distance1 <30)
   {
     Serial.print(" Pulses: ");
       Serial.println(right_wheel_pulse_count);
@@ -224,35 +235,92 @@ void loop() {
   Serial.print("   Two ");
   Serial.print(distance2);
 
+  Serial.print("Sensor Values : ");
+  Serial.print(sensorValue0);
+ // Serial.print(" : ");
+  //Serial.print(sensorValue1);
+  Serial.print(" : ");
+  Serial.print(sensorValue2);
+  Serial.print(" : ");
+  Serial.print(sensorValue3);
+  Serial.print(" : ");
+  Serial.print(sensorValue4);
+  //Serial.print(); // Separate each reading with a line break
+  Serial.println();
 
   StopMotors();
   //delay(500);
+   delay(3000);
+   R360T();
 
-  ReverseDirectionControl();
-  delay(300);
 
-  R360T();
+  digitalWrite(Earm , HIGH);
+  delay(700);
+  digitalWrite(Earm ,LOW);
+  delay(500);
+
+
+  //ReverseDirectionControl();
+ 
+//R360T();
     //delay(600);
   
 
 
   } else {
   
+    if ((sensorValue0 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) ) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+    /*if ((currentMillis - 250) ==0){
+      TurnRightControl();
+    }*/
+  }
+  else if ((sensorValue0==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
+    SmallRightTurn();
+    //TurnRightControl();
+
+  }
+   else if (((sensorValue0==0  && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) ){
+    MidRightTurn();
+
+  }
+  else if ((sensorValue0==0  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
+    // Serial.print("Turn Right.");
+    SmallRightTurn();
+  }
+      else if ((sensorValue0==1) &&  (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
+        SmallLeftTurn();
+    //
+
+  }
+    else if (((sensorValue0==1 && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0)) ){
+    MidLeftTurn();
+
+  }
+ 
+    else if  ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
+    // Serial.print("Turn Left.");
+    TurnLeftControl();
+  } 
+    else if (((sensorValue0 == 0) && (sensorValue4 == 0)) or ((sensorValue0==0)  && (sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 0))) {
+    // Serial.print("Drive straight.");
+    ForwardDirectionControl();
+      }
     
 
   }
-    
+    }
 
     // If one second has passed, print the number of pulses
 
 
     }
-}
 
 
 void StartForwardDirection(){
-    analogWrite(enB, 80);
-    analogWrite(enA, 59);
+    analogWrite(enB, 105);
+    analogWrite(enA, 79);
 
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
@@ -262,7 +330,7 @@ void StartForwardDirection(){
 }
 void SmallLeftTurn(){
   analogWrite(enB, 0);
-  analogWrite(enA, 60);
+  analogWrite(enA, 55);
 
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH );
@@ -272,7 +340,7 @@ void SmallLeftTurn(){
 }
 void MidLeftTurn(){
   analogWrite(enB, 0);
-  analogWrite(enA, 80);
+  analogWrite(enA, 75);
 
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH );
@@ -284,7 +352,7 @@ void MidLeftTurn(){
 void TurnLeftControl()
 {
   analogWrite(enB, 0);
-  analogWrite(enA, 100);
+  analogWrite(enA, 85);
 
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH );
@@ -296,7 +364,7 @@ void TurnLeftControl()
 void MainFuction(){}//moving to objects
 void StartReturnDirection(){}
 void SmallRightTurn(){
-  analogWrite(enB, 60);
+  analogWrite(enB, 70);
   analogWrite(enA, 0);
 
   digitalWrite(in1, HIGH );
@@ -306,7 +374,7 @@ void SmallRightTurn(){
  // delay(100);
 }
 void MidRightTurn(){
-  analogWrite(enB, 80);
+  analogWrite(enB, 75);
   analogWrite(enA, 0);
 
   digitalWrite(in1, HIGH );
@@ -319,8 +387,8 @@ void MidRightTurn(){
 void ForwardDirectionControl() {
   // Set motors to maximum speed
   // For PWM maximum possible values are 0 to 255
-    analogWrite(enB, 85);
-    analogWrite(enA, 69);
+    analogWrite(enB, 95);
+    analogWrite(enA, 71);
 
     digitalWrite(in1, LOW);
     digitalWrite(in2, HIGH);
@@ -372,7 +440,7 @@ void left_wheel_pulse() {
   }
 }
 void R360T(){
-  analogWrite(enB, 250);
+  analogWrite(enB, 150);
   analogWrite(enA, 0);
 
   digitalWrite(in1, HIGH);
@@ -395,7 +463,7 @@ void ReverseDirectionControl()
 }
 void TurnRightControl()
 {
-  analogWrite(enB, 100);
+  analogWrite(enB, 80);
   analogWrite(enA, 0);
 
   digitalWrite(in1, HIGH );
@@ -413,106 +481,4 @@ void StopMotors()
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 }
-
-void StageOne(){
-   if (distance2 > 100 ) {
-    Stage+=1;
-    linefollowing();}    
-  else{
-    TurnRightControl();
-  }}
-void StageTwo(){
-  Stage+=1;
-  if (distance2 >320){
-     linefollowing();}    
-  else{
-    TurnLeftControl(); }    
- }
-void StageThree(){
-   if (distance2 > 100 ) {
-    Stage+=1;
-    linefollowing();}    
-  else{
-    TurnRightControl();
-  }}
-   void StageFour(){
-   if (distance2 > 90 ) {
-    Stage+=1;
-     linefollowing(); }   
-  else{
-    TurnRightControl(); }}
-void StageFive(){
-  if (distance2 > 90 ) {
-    Stage+=1;
-     linefollowing(); }   
-  else{
-    TurnLeftControl(); }}
-void StageSix(){
-  if (distance2 > 30 ) {
-    Stage+=1;
-     linefollowing();}    
-  else{
-    R360T(); }}
-
-
-void linefollowing(){
-    // Read the state of each sensor and print the results
-  int sensorValue0 = digitalRead(sensorPins[0]);
-  int sensorValue1 = digitalRead(sensorPins[1]);
-  int sensorValue2 = digitalRead(sensorPins[2]);
-  int sensorValue3 = digitalRead(sensorPins[3]);
-  int sensorValue4 = digitalRead(sensorPins[4]);
-  Serial.print("Sensor Values : ");
-  Serial.print(sensorValue0);
- // Serial.print(" : ");
-  //Serial.print(sensorValue1);
-  Serial.print(" : ");
-  Serial.print(sensorValue2);
-  Serial.print(" : ");
-  Serial.print(sensorValue3);
-  Serial.print(" : ");
-  Serial.print(sensorValue4);
-  //Serial.print(); // Separate each reading with a line break
-  Serial.println();
-
-  if ((sensorValue0 == 0) && (sensorValue2 == 0) && (sensorValue3 == 0) && (sensorValue4 == 0) ) {
-    // Serial.print("Drive straight.");
-    ForwardDirectionControl();
-    if ((currentMillis - 250) ==0){
-      TurnRightControl();
-    }
-  }
-  else if ((sensorValue0==0)&&(sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 1)){
-    TurnRightControl();
-
-  }
-   else if (((sensorValue0==0  && sensorValue2== 0) &&(sensorValue3 ==1) && (sensorValue4 == 1)) or ((sensorValue0==0 &&sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1))){
-    MidRightTurn();
-
-  }
-  else if ((sensorValue0==0  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 1)) {
-    // Serial.print("Turn Right.");
-    SmallRightTurn();
-  }
-      else if ((sensorValue0==1) &&  (sensorValue2== 0) &&(sensorValue3 ==0) && (sensorValue4 == 0)){
-    TurnLeftControl();
-
-  }
-    else if (((sensorValue0==1 && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0)) or ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==0) && (sensorValue4 == 0))){
-    MidLeftTurn();
-
-  }
- 
-    else if  ((sensorValue0==1  && sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 ==0)) {
-    // Serial.print("Turn Left.");
-    SmallLeftTurn();
-  } 
-    else if (((sensorValue0 == 0) && (sensorValue4 == 0)) or ((sensorValue0==0)  && (sensorValue2== 1) &&(sensorValue3 ==1) && (sensorValue4 == 0))) {
-    // Serial.print("Drive straight.");
-    ForwardDirectionControl();
-      }
-    
-}
-
-
 
